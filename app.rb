@@ -2,12 +2,15 @@ require_relative 'person'
 require_relative 'student'
 require_relative 'teacher'
 require_relative 'book'
+require_relative 'rental'
 
 class App
-  @@welcome_message = 'Welcome to School Library App!',
+  @@welcome_message = 'Welcome to School Library App!'
   @@menu_message = 'Please choose an option by entering a number:'
   
   def initialize
+    print "#{@@welcome_message}\n\n"
+
     @books = []
     @students = []
     @teachers = []
@@ -15,7 +18,6 @@ class App
   end
 
   def run
-    puts "#{@@welcome_message}\n"
     puts @@menu_message
 
     puts '1 - List all books'
@@ -38,22 +40,21 @@ class App
       when '5'
         create_rental
       when '6'
-        puts 'ID:'
-        id = gets.chomp
-        list_rentals(id)
+        list_rentals
       when '7'
         puts 'Thank you for using this app!'
         exit
       else
         puts 'That is not a valid input'
-      end
-      run
+    end
+    run
   end
 
   private
 
   def list_books
     @books.each { |book| puts book }
+    puts
   end
 
   def people
@@ -61,7 +62,8 @@ class App
   end
 
   def list_people
-    @people.each { |person| puts person }
+    people.each { |person| puts person }
+    puts
   end
 
   def create_person
@@ -77,7 +79,7 @@ class App
     age = gets.chomp
 
     print 'Name: '
-    age = gets.chomp
+    name = gets.chomp
 
     if person_class == '1'
       print 'Has parent permission? [Y/N]: '
@@ -96,12 +98,12 @@ class App
     end
 
     if person_class == '1'
-      @students << Student.new(age, nil, name, parent_permission)
+      @students << Student.new(age, nil, name, parent_permission: true)
     elsif person_class == '2'
       @teachers << Teacher.new(age, specialization, name)
     end
 
-    puts "Person created successfully\n"
+    print "Person created successfully\n\n"
   end
 
   def create_book
@@ -113,31 +115,36 @@ class App
 
     @books << Book.new(title, author)
 
-    puts "Book created successfully\n"
+    print "Book created successfully\n\n"
   end
 
   def create_rental
     puts 'Select a book from the following list by number'
     @books.each_with_index { |book, index| puts "#{index}) #{book}" }
     book_index = gets.chomp.to_i
-    
+    puts
+
     puts 'Select a person from the following list by number (not id)'
     people.each_with_index { |person, index| puts "#{index}) #{person}" }
     person_index = gets.chomp.to_i
+    puts
 
     print 'Date: '
     date = gets.chomp
 
     @rentals << Rental.new(date, @books[book_index], people[person_index])
+
+    print "Rental created successfully\n\n"
   rescue
     puts 'That is not a valid input. Rental creation failed.'
   end
 
-  def list_rentals(id)
+  def list_rentals
     print 'ID of person: '
     id = gets.chomp.to_i
 
     puts 'Rentals:'
     @rentals.each { |rental| puts rental if rental.person.id == id }
+    puts
   end
 end
