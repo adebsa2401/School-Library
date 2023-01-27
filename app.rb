@@ -5,48 +5,33 @@ require_relative 'book'
 require_relative 'rental'
 
 class App
-  @@welcome_message = 'Welcome to School Library App!'
-  @@menu_message = 'Please choose an option by entering a number:'
-  
   def initialize
-    print "#{@@welcome_message}\n\n"
+    @welcome_message = 'Welcome to School Library App!'
+    @menu_message = 'Please choose an option by entering a number:'
 
     @books = []
     @students = []
     @teachers = []
     @rentals = []
+
+    @options = [
+      { label: 'List all books', action: :list_books },
+      { label: 'List all people', action: :list_people },
+      { label: 'Create a person', action: :create_person },
+      { label: 'Create a book', action: :create_book },
+      { label: 'Create a rental', action: :create_rental },
+      { label: 'List all rentals for a given person id', action: :list_rentals },
+      { label: 'Exit', action: :exit_app }
+    ]
+
+    print "#{@welcome_message}\n\n"
   end
 
   def run
-    puts @@menu_message
+    puts @menu_message
+    @options.each_with_index { |option, index| puts "#{index + 1} - #{option[:label]}" }
+    send(@options[gets.chomp.to_i - 1][:action])
 
-    puts '1 - List all books'
-    puts '2 - List all people'
-    puts '3 - Create a person'
-    puts '4 - Create a book'
-    puts '5 - Create a rental'
-    puts '6 - List all rentals for a given person id'
-    puts '7 - Exit'
-
-    case gets.chomp
-      when '1'
-        list_books
-      when '2'
-        list_people
-      when '3'
-        create_person
-      when '4'
-        create_book
-      when '5'
-        create_rental
-      when '6'
-        list_rentals
-      when '7'
-        puts 'Thank you for using this app!'
-        exit
-      else
-        puts 'That is not a valid input'
-    end
     run
   end
 
@@ -66,41 +51,51 @@ class App
     puts
   end
 
-  def create_person
-    print 'Do you want to create a student (1) or a teacher (2)? [Input the number]: '
-    person_class = gets.chomp
-
-    if person_class != '1' && person_class != '2'
-      puts 'That is not a valid input. Person creation failed.'
-      return
-    end
-
+  def create_student
     print 'Age: '
     age = gets.chomp
 
     print 'Name: '
     name = gets.chomp
 
-    if person_class == '1'
-      print 'Has parent permission? [Y/N]: '
-      case gets.chomp.upcase
-        when 'Y'
-          parent_permission = true
-        when 'N'
-          parent_permission = false
-        else
-          puts 'That is not a valid input. Person creation failed.'
-          return
-      end
-    elsif person_class == '2'
-      print 'Specialization: '
-      specialization = gets.chomp
+    print 'Has parent permission? [Y/N]: '
+    case gets.chomp.upcase
+    when 'Y'
+      parent_permission = true
+    when 'N'
+      parent_permission = false
+    else
+      puts 'That is not a valid input. Person creation failed.'
+      return
     end
 
-    if person_class == '1'
-      @students << Student.new(age, nil, name, parent_permission: true)
-    elsif person_class == '2'
-      @teachers << Teacher.new(age, specialization, name)
+    @students << Student.new(age, nil, name, parent_permission:)
+  end
+
+  def create_teacher
+    print 'Age: '
+    age = gets.chomp
+
+    print 'Name: '
+    name = gets.chomp
+
+    print 'Specialization: '
+    specialization = gets.chomp
+
+    @teachers << Teacher.new(age, specialization, name)
+  end
+
+  def create_person
+    print 'Do you want to create a student (1) or a teacher (2)? [Input the number]: '
+
+    case gets.chomp
+    when '1'
+      create_student
+    when '2'
+      create_teacher
+    else
+      puts 'That is not a valid input. Person creation failed.'
+      return
     end
 
     print "Person created successfully\n\n"
@@ -109,7 +104,7 @@ class App
   def create_book
     print 'Title: '
     title = gets.chomp
-    
+
     print 'Author: '
     author = gets.chomp
 
@@ -135,8 +130,6 @@ class App
     @rentals << Rental.new(date, @books[book_index], people[person_index])
 
     print "Rental created successfully\n\n"
-  rescue
-    puts 'That is not a valid input. Rental creation failed.'
   end
 
   def list_rentals
@@ -146,5 +139,10 @@ class App
     puts 'Rentals:'
     @rentals.each { |rental| puts rental if rental.person.id == id }
     puts
+  end
+
+  def exit_app
+    puts 'Thank you for using this app!'
+    exit
   end
 end
