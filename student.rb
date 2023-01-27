@@ -16,4 +16,8 @@ class Student < Person
     @classroom = classroom
     @classroom.add_student(self) unless @classroom.students.include?(self)
   end
+
+  def to_s
+    "[Student] #{super}"
+  end
 end
