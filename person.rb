@@ -20,6 +20,11 @@ class Person < Nameable
     name
   end
 
+  def add_rental(rental)
+    @rentals << rental unless @rentals.include?(rental)
+    rental.person = self
+  end
+
   private
 
   def of_age?
