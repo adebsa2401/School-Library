@@ -24,6 +24,7 @@ class Person < Nameable
   def add_rental(rental)
     @rentals << rental unless @rentals.include?(rental)
     rental.person = self
+  end
 
   def to_s
     "Name: #{@name}, ID: #{@id}, Age: #{@age}"
