@@ -11,5 +11,8 @@ class Book
   def add_rental(rental)
     @rentals << rental unless @rentals.include?(rental)
     rental.book = self
+
+  def to_s
+    "Title: \"#{@title}\", Author: #{@author}"
   end
 end

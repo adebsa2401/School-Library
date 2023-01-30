@@ -6,6 +6,7 @@ class Person < Nameable
 
   def initialize(age, name = 'Unknown', parent_permission: true)
     super()
+    @id = rand(1000)
     @name = name
     @age = age
     @parent_permission = parent_permission
@@ -23,6 +24,9 @@ class Person < Nameable
   def add_rental(rental)
     @rentals << rental unless @rentals.include?(rental)
     rental.person = self
+
+  def to_s
+    "Name: #{@name}, ID: #{@id}, Age: #{@age}"
   end
 
   private
